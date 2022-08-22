@@ -1,0 +1,35 @@
+#ifndef INPUT_H
+#define INPUT_H
+#include <SDL2/SDL_keyboard.h>
+
+struct Key {
+	Key(int sdl_scancode) : keycode(sdl_scancode) {}
+	int keycode;
+};
+
+// This was a pain
+namespace Keys {
+	static const Key
+			ZERO(SDL_SCANCODE_0),              ONE(SDL_SCANCODE_1),          TWO(SDL_SCANCODE_2),   THREE(SDL_SCANCODE_3), FOUR(SDL_SCANCODE_4),
+			FIVE(SDL_SCANCODE_5),              SIX(SDL_SCANCODE_6),          SEVEN(SDL_SCANCODE_7), EIGHT(SDL_SCANCODE_8), NINE(SDL_SCANCODE_9),
+			A(SDL_SCANCODE_A),                 B(SDL_SCANCODE_B),            C(SDL_SCANCODE_C),     D(SDL_SCANCODE_D),     E(SDL_SCANCODE_E),
+			F(SDL_SCANCODE_F),                 G(SDL_SCANCODE_G),            H(SDL_SCANCODE_H),     I(SDL_SCANCODE_I),     J(SDL_SCANCODE_J),
+			K(SDL_SCANCODE_K),                 L(SDL_SCANCODE_L),            M(SDL_SCANCODE_M),     N(SDL_SCANCODE_N),     O(SDL_SCANCODE_O),
+			P(SDL_SCANCODE_P),                 Q(SDL_SCANCODE_Q),            R(SDL_SCANCODE_R),     S(SDL_SCANCODE_S),     T(SDL_SCANCODE_T),
+			U(SDL_SCANCODE_U),                 V(SDL_SCANCODE_V),            W(SDL_SCANCODE_W),     X(SDL_SCANCODE_X),     Y(SDL_SCANCODE_Y),
+			Z(SDL_SCANCODE_Z),
+			F1(SDL_SCANCODE_F1),               F2(SDL_SCANCODE_F2),          F3(SDL_SCANCODE_F3),   F4(SDL_SCANCODE_F4),   F5(SDL_SCANCODE_F5),
+			F6(SDL_SCANCODE_F6),               F7(SDL_SCANCODE_F7),          F8(SDL_SCANCODE_F8),   F9(SDL_SCANCODE_F9),   F10(SDL_SCANCODE_F10),
+			F11(SDL_SCANCODE_F11),             F12(SDL_SCANCODE_F12),
+			BACKSPACE(SDL_SCANCODE_BACKSPACE), DELETE(SDL_SCANCODE_DELETE),  ESCAPE(SDL_SCANCODE_ESCAPE),
+			LALT(SDL_SCANCODE_LALT),           LCONTROL(SDL_SCANCODE_LCTRL), LSHIFT(SDL_SCANCODE_LSHIFT),
+			RALT(SDL_SCANCODE_RALT),           RCONTROL(SDL_SCANCODE_RCTRL), RSHIFT(SDL_SCANCODE_RSHIFT),
+			ENTER(SDL_SCANCODE_RETURN),        SPACE(SDL_SCANCODE_SPACE),    TAB(SDL_SCANCODE_TAB),
+			PGUP(SDL_SCANCODE_PAGEUP),         PGDN(SDL_SCANCODE_PAGEDOWN),
+			LEFT(SDL_SCANCODE_LEFT),           RIGHT(SDL_SCANCODE_RIGHT),    UP(SDL_SCANCODE_UP),   DOWN(SDL_SCANCODE_DOWN);
+}
+inline bool key_held(Key k) {
+	const Uint8 *kb_state = SDL_GetKeyboardState(NULL);
+	return kb_state[k.keycode] ? true : false;
+}
+#endif
