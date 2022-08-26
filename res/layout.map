@@ -1,0 +1,8 @@
+# this is a comment
+# this is also gonna function as a design doc for .map
+
+# tm = TexturedModel
+# ./res/stall.obj = model path
+# ./res/stallTexture.bmp = texture path
+#																					x y z
+tm ./res/stall.obj ./res/stallTexture.bmp 0 0 0

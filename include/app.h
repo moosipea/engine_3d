@@ -84,10 +84,8 @@ class App {
 					}
 				}
 				
-				//this->renderer.clear(0.0f, 0.25f, 0.25f);	
 				this->renderer.clear(0.0f, 0.0f, 0.0f);
 
-				// hidden update() call
 				if(!update(this->delta)) this->is_running = false;
 				
 				this->renderer.flip();

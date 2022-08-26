@@ -151,4 +151,41 @@ inline mat4x4f gen_perspective_matrix(float fov_y, float aspect, float near, flo
 	mat.set(3, 2, -(2.0f * far * near) / (far - near));
 	return mat;
 }
+
+inline mat4x4f gen_rotation_matrix_euler(float rx, float ry, float rz) {
+	mat4x4f mat_x, mat_y, mat_z;
+	float d = 3.14159f / 180.0f;
+	float radx = rx * d;
+	float rady = ry * d;
+	float radz = rz * d;
+
+	mat_x.set(0, 0, 1.0f);
+	mat_x.set(1, 1, std::cos(radx));
+	mat_x.set(1, 2, -std::sin(radx));
+	mat_x.set(2, 1, std::sin(radx));
+	mat_x.set(2, 2, std::cos(radx));
+	mat_x.set(3, 3, 1.0f);
+
+	mat_y.set(0, 0, std::cos(rady));
+	mat_y.set(0, 2, std::sin(rady));
+	mat_y.set(1, 1, 1.0f);
+	mat_y.set(2, 0, -std::sin(rady));
+	mat_y.set(2, 2, std::cos(rady));
+	mat_y.set(3, 3, 1.0f);
+	
+	mat_z.set(0, 0, std::cos(radz));
+	mat_z.set(0, 1, -std::sin(radz));
+	mat_z.set(1, 0, std::sin(radz));
+	mat_z.set(1, 1, std::cos(radz));
+	mat_z.set(2, 2, 1.0f);
+	mat_z.set(3, 3, 1.0f);
+	
+	//return mat_x * mat_y * mat_z;
+	return mat_y * mat_x * mat_z;
+}
+
+inline float rad(float degrees) {
+	return degrees * (3.14159f / 180.0f);
+}
+
 #endif

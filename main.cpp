@@ -1,5 +1,6 @@
 #include "include/maths.h"
 #include "include/renderer.h"
+#include "include/files.h"
 #include "include/shader.h"
 #include "include/app.h"
 #include "include/input.h"
@@ -10,7 +11,7 @@ class tApp : public App {
 	bool create() {
 		
 		// vertices for a cube
-		std::vector<float> vertices = {
+/*		std::vector<float> vertices = {
 			-1.0f,-1.0f,-1.0f,
     	-1.0f,-1.0f, 1.0f,
     	-1.0f, 1.0f, 1.0f,
@@ -88,52 +89,141 @@ class tApp : public App {
     	0.982f,  0.099f,  0.879f	
 		};
 
-		this->m = Model(0.0f, 0.0f, 0.0f, vertices, colors);
+    std::vector<float> uv_coords = {
+      0.000059f, 1.0f-0.000004f,
+      0.000103f, 1.0f-0.336048f,
+      0.335973f, 1.0f-0.335903f,
+      1.000023f, 1.0f-0.000013f,
+      0.667979f, 1.0f-0.335851f,
+      0.999958f, 1.0f-0.336064f,
+      0.667979f, 1.0f-0.335851f,
+      0.336024f, 1.0f-0.671877f,
+      0.667969f, 1.0f-0.671889f,
+      1.000023f, 1.0f-0.000013f,
+      0.668104f, 1.0f-0.000013f,
+      0.667979f, 1.0f-0.335851f,
+      0.000059f, 1.0f-0.000004f,
+      0.335973f, 1.0f-0.335903f,
+      0.336098f, 1.0f-0.000071f,
+      0.667979f, 1.0f-0.335851f,
+      0.335973f, 1.0f-0.335903f,
+      0.336024f, 1.0f-0.671877f,
+      1.000004f, 1.0f-0.671847f,
+      0.999958f, 1.0f-0.336064f,
+      0.667979f, 1.0f-0.335851f,
+      0.668104f, 1.0f-0.000013f,
+      0.335973f, 1.0f-0.335903f,
+      0.667979f, 1.0f-0.335851f,
+      0.335973f, 1.0f-0.335903f,
+      0.668104f, 1.0f-0.000013f,
+      0.336098f, 1.0f-0.000071f,
+      0.000103f, 1.0f-0.336048f,
+      0.000004f, 1.0f-0.671870f,
+      0.336024f, 1.0f-0.671877f,
+      0.000103f, 1.0f-0.336048f,
+      0.336024f, 1.0f-0.671877f,
+      0.335973f, 1.0f-0.335903f,
+      0.667969f, 1.0f-0.671889f,
+      1.000004f, 1.0f-0.671847f,
+      0.667979f, 1.0f-0.335851f 
+    };*/
+
+		 // this->m = Model(0.0f, 0.0f, 0.0f, vertices, colors);
+   // this->m = Model(0.0f, 0.0f, 0.0f, vertices);
+     // this->m.setUVs(uv_coords);
+    //this->m2 = Model(3.0f, 0.0f, 0.0f, vertices);
+    
+    //this->m = Model(0.0f, 0.0f, 0.0f, "./res/stall.obj");
+
+    //this->tex = BitmapTexture("./res/stallTexture.bmp");
+    
+		this->meshes.push_back(TexturedModel(0.0f, 0.0f, 5.0f, "./res/cube.obj", "./res/grid.bmp"));
+		this->meshes.push_back(TexturedModel(15.0f, 0.0f, 5.0f, "./res/Rickmay.obj", "./res/grid.bmp"));
+
+   // this->meshes.push_back(this->m);
+    //this->meshes.push_back(this->m2);
 
 		this->s.load_from_path("./res/vert.glsl", "./res/frag.glsl");
 		this->resolution = vec2f((float)getWidth(), (float)getHeight());
 		
-		this->cam = PerspectiveCamera(0.0f, 0.0f, 0.0f);
-		this->cam.configureFustrum(45.0f, getWidth(), getHeight(), 0.1f, 1000.0f);
+		this->cam = PerspectiveCamera(0.0f, 0.0f, 3.0f);
+		this->cam.configureFustrum(60.0f, getWidth(), getHeight(), 0.1f, 1000.0f);
 
 		//this->mat_proj = gen_perspective_matrix(45.0f, (float)getWidth()/(float)getHeight(), 0.1f, 100.0f);
-		this->mat_model = gen_identity_matrix();
+		//this->mat_model = gen_identity_matrix();
+		this->mat_model = gen_translation_matrix(3.0f, 0.0f, 0.0f);
 		//this->mat_view = gen_scaling_matrix(0.6f, 0.6f, 0.6f) * gen_translation_matrix(0.0f, 0.0f, -1.0f);
-		
+			
+		this->sun_dir = vec3f(-1.0f, 1.0f, -0.5f);
+
 		this->s.enable();
 
 		return true;
 	}
 
 	bool update(float delta) {
-		if(key_held(Keys::W))
-			this->cam.move(0.0, 0.0, -0.5 * delta);
-		if(key_held(Keys::S))
-			this->cam.move(0.0, 0.0, 0.5 * delta);
-		if(key_held(Keys::A))
-			this->cam.move(-0.5 * delta, 0.0, 0.0);
-		if(key_held(Keys::D))
-			this->cam.move(0.5 * delta, 0.0, 0.0);
-    
-    setTitle(getTitle() + " fps: " + std::to_string(getFPS()));
 
+    //this->s.enable();
+
+		if(key_held(Keys::W))
+      this->cam.move_forward(-2.0f * delta);
+		if(key_held(Keys::S))
+      this->cam.move_forward(2.0f * delta);
+		if(key_held(Keys::A))
+      this->cam.move_side(2.0f * delta);
+		if(key_held(Keys::D))
+      this->cam.move_side(-2.0f * delta);
+		if(key_held(Keys::R))
+			this->cam.move(0.0, -2.0 * delta, 0.0);
+		if(key_held(Keys::F))
+			this->cam.move(0.0, 2.0 * delta, 0.0);
+    
+    // handle rotation
+    if(key_held(Keys::LEFT))
+			this->cam.rotate(0.0, -45.0 * delta, 0.0);
+    if(key_held(Keys::RIGHT))
+			this->cam.rotate(0.0, 45.0 * delta, 0.0);
+    if(key_held(Keys::UP))
+			this->cam.rotate(-45.0 * delta, 0.0, 0.0);
+    if(key_held(Keys::DOWN))
+			this->cam.rotate(45.0 * delta, 0.0, 0.0);
+		if(key_held(Keys::E))
+			this->cam.rotate(0.0, 0.0, -45.0 * delta);
+		if(key_held(Keys::Q))
+			this->cam.rotate(0.0, 0.0, 45.0 * delta);
+
+    setTitle(getTitle() + " fps: " + std::to_string(getFPS()) + " | specular: " + std::to_string(this->specular));
 		this->s.setUniform2f("iResolution", this->resolution);
 		this->s.setUniformMatrix4f("matModel", this->mat_model);
+		this->s.setUniform3f("sunDirection", this->sun_dir);
+
+		vec3f camPos(this->cam.x, this->cam.y, this->cam.z);
+		this->s.setUniform3f("cameraPosition", camPos);
+
+		this->s.setUniform1f("specular", this->specular);
 		/*this->s.setUniformMatrix4f("matView", this->mat_view);
 		this->s.setUniformMatrix4f("matProj", this->mat_proj);*/
 	
 		this->cam.loadMatrices(this->s);
-
-		getRenderer()->render(this->m);
+		
+		for(auto& model : this->meshes) {
+			model.transform(0.0, 0.0, 0.0, 0.0, 15.0*delta, 0.0);
+			this->s.setUniformMatrix4f("matModel", model.getMatrix());
+			getRenderer()->render(model);
+		}
 		return true;
 	}
 
 	private:
+    BitmapTexture tex;
 		PerspectiveCamera cam;	
-		Model m;
+		TexturedModel m;
+    std::vector<TexturedModel> meshes;
 		Shader s;
+		vec3f sun_dir;
 		vec2f resolution;
 		mat4x4f mat_proj, mat_model, mat_view;
+		float specular = 20.0f;
 };
 
 int main(int argc, char **argv) {

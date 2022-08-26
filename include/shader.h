@@ -109,6 +109,8 @@ class Shader {
 			// Well, shit
 			glBindAttribLocation(this->program, 0, "in_Position");
 			glBindAttribLocation(this->program, 1, "in_Color");
+			glBindAttribLocation(this->program, 2, "vertex_uv");
+			glBindAttribLocation(this->program, 3, "vertex_normal");
 
 			glLinkProgram(this->program);
 			log.info("Checking program");
@@ -122,4 +124,84 @@ class Shader {
 			glDeleteShader(frag_shader);
 		}
 };
+
+class DefaultShader : public Shader {
+	public:
+		DefaultShader() {
+			this->vert_shader = 
+				"#version 130\n"
+				"precision highp float;\n"
+				"in vec4 in_Position;\n"
+				"in vec3 in_Color\n;"
+				"in vec2 in_UV;\n"
+				"in vec in_Normal;\n"
+				"out vec3 out_Color;\n"
+				"out vec2 out_UV;\n"
+				"out float out_Light;\n"
+				"uniform mat4 uMatProj;\n"
+				"uniform mat4 uMatView;\n"
+				"uniform mat4 uMatModel;\n"
+				"uniform vec3 uSunDirection;\n"
+				"uniform vec3 uCameraPosition;\n"
+				"void main(void) {\n"
+				"vec4 t = uMatProj * uMatView * uMatModel * vec4(in_Position.xyz, 1.0f);\n"
+				"float l = t.w != 0.0f ? t.w : 1.0f;\n"
+				"gl_Position = vec4(t.x/l, t.y/l, t.z/l, 1.0f);\n"
+				"out_Light = dot(normalize(in_Normal), normalize(uSunDirection));\n"
+				"out_Color = in_Color;\n"
+				"out_UV = in_UV"
+				"}";
+			this->frag_shader = 
+				"#version 130\n"
+				"precision highp float;\n"
+				"in vec2 out_UV;\n"
+				"in vec3 out_Color;\n"
+				"in float out_Light;\n"
+				"out vec4 out_FragColor;\n"
+				"uniform vec2 uResolution;\n"
+				"uniform sampler2D uTextureSampler;\n"
+				"uniform vec3 uAmbientColor;\n"
+				"uniform float uBrightness;\n"
+				"uniform float uContrast;\n"
+				"uniform float uSaturation;\n"
+				"uniform float uHue;\n"
+				"void main(void) {\n"
+				"vec4 a4 = vec4(uAmbientColor.rgb, 1.0f);\n"
+				"out_FragColor = vec4(texture(uTextureSampler).rgb, 1.0f) * out_Light + a4;\n"
+				"}";
+			Shader(this->vert_shader, this->frag_shader);
+		}
+	
+	void setAmbient(vec3f ambient_color) {
+		this->setUniform3f("uAmbientColor", ambient_color);
+	}
+
+	void setBrightness(float brightness) {
+		this->setUniform1f("uBrightness", brightness);
+	}
+	void setContrast(float contrast) {
+		this->setUniform1f("uContrast", contrast);
+	}
+	void setSaturation(float saturation) {
+		this->setUniform1f("uSaturation", saturation);
+	}
+	void setHue(float hue) {
+		this->setUniform1f("uHue", hue);
+	}
+
+	void setViewMatrix(mat4x4f mat_view) {
+		this->setUniformMatrix4f("uMatView", mat_view);
+	}
+	void setProjMatrix(mat4x4f mat_proj) {
+		this->setUniformMatrix4f("uMatProj", mat_proj);
+	}
+	void setModelMatrix(mat4x4f mat_model) {
+		this->setUniformMatrix4f("uMatModel", mat_model);
+	}
+
+	private:
+		std::string vert_shader;
+		std::string frag_shader;
+};
+
 #endif
